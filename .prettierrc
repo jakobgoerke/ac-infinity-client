@@ -6,5 +6,5 @@
   "trailingComma": "es5",
   "semi": true,
   "rcVerbose": true,
-  "editor.formatOnSave": true,
+  "editor.formatOnSave": true
 }

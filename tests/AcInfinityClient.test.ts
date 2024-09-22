@@ -33,7 +33,6 @@ describe('AcInfintyClient', () => {
 
   it('should throw when authentication code is not 200', async () => {
     // given
-    const response = responseMock[Url.CONTROLLERS];
     mockApiResponse(
       {
         something: 'else',

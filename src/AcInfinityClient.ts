@@ -28,7 +28,7 @@ export interface AuthParams {
   password: string;
 }
 
-export interface GetDeviceParams {
+interface GetDeviceParams {
   deviceId: string;
   port: number;
 }
@@ -96,7 +96,7 @@ class AcInfinityClientInstance {
   }
 }
 
-export class AcInfinityClient {
+class AcInfinityClient {
   constructor(args: AuthParams) {
     this.instance = new AcInfinityClientInstance(args);
   }
@@ -109,3 +109,6 @@ export class AcInfinityClient {
     return instance;
   }
 }
+
+export { AcInfinityClient };
+export type { Controller, User, DeviceModeSettings, DeviceSettings };

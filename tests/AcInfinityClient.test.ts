@@ -2,6 +2,8 @@ import { AcInfinityClient, AuthParams, Url } from '../src';
 
 import { responseMock } from './mocks/responseMock';
 import mockAxios from './__mocks__/axios';
+import { AuthenticationError } from '../src/errors';
+import { ZodError } from 'zod';
 
 describe('AcInfintyClient', () => {
   const authparams: AuthParams = {
@@ -27,6 +29,33 @@ describe('AcInfintyClient', () => {
       appPasswordl: authparams.password,
     });
     expect(mockAxios.defaults.headers.common['token']).toBe(response.appId);
+  });
+
+  it('should throw when authentication code is not 200', async () => {
+    // given
+    const response = responseMock[Url.CONTROLLERS];
+    mockApiResponse(
+      {
+        something: 'else',
+      },
+      401
+    );
+
+    // when
+    const client = new AcInfinityClient(authparams);
+
+    // then
+    expect(client.instance.authenticate()).rejects.toThrow(AuthenticationError);
+  });
+
+  it('should throw ZodError when invalid data is returned', async () => {
+    // given
+    mockApiResponse({
+      something: 'else',
+    });
+
+    // when
+    expect(AcInfinityClient.build(authparams)).rejects.toThrow(ZodError);
   });
 
   it('should parse getControllers response', async () => {
@@ -72,9 +101,10 @@ describe('AcInfintyClient', () => {
     expect(mockAxios.post).toHaveBeenCalledWith(Url.DEVICE_MODE_SETTINGS, { devId: 'test', port: 1 });
   });
 
-  const mockApiResponse = (data: Object) => {
+  const mockApiResponse = (data: Object, code?: number) => {
     const response = {
       data: {
+        code: code || 200,
         data,
       },
     };

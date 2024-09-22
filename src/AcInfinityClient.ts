@@ -10,6 +10,7 @@ import {
   DeviceSettings,
   DeviceSettingsSchema,
 } from './types';
+import { AuthenticationError } from './errors';
 
 export enum Url {
   AUTH = '/user/appUserLogin',
@@ -61,6 +62,10 @@ class AcInfinityClientInstance {
       appEmail: this.email,
       appPasswordl: this.password,
     });
+
+    if (response.data.code !== 200) {
+      throw new AuthenticationError();
+    }
 
     const user = UserSchema.parse(response.data.data);
     this.token = user.appId;

@@ -30,7 +30,7 @@ export const ControllerSchema = z.object({
   devType: z.nativeEnum(ControllerDeviceType),
   devPortCount: z.number().positive(),
   devVersion: z.number(),
-  online: z.boolean(),
+  online: z.coerce.boolean(),
   firmwareVersion: z.string(),
   hardwareVersion: z.string(),
   deviceInfo: ControllerDeviceInfoSchema,

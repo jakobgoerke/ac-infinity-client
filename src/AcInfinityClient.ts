@@ -1,4 +1,4 @@
-import axios, { HttpStatusCode, type AxiosInstance } from 'axios';
+import axios, { type HttpStatusCode, type AxiosInstance } from 'axios';
 
 import {
   Controller,
@@ -11,17 +11,24 @@ import {
   DeviceSettingsSchema,
 } from './types';
 
-interface Response<T> {
-  code: typeof HttpStatusCode;
+export enum Url {
+  AUTH = '/user/appUserLogin',
+  CONTROLLERS = '/user/devInfoListAll',
+  DEVICE_SETTINGS = '/dev/getDevSetting',
+  DEVICE_MODE_SETTINGS = '/dev/getdevModeSettingList',
+}
+
+export interface Response<T> {
+  code: number;
   data: T;
 }
 
-interface AuthParams {
+export interface AuthParams {
   username: string;
   password: string;
 }
 
-interface GetDeviceParams {
+export interface GetDeviceParams {
   deviceId: string;
   port: number;
 }
@@ -49,7 +56,7 @@ class AcInfinityClientInstance {
   private password: string;
 
   public async authenticate(): Promise<User> {
-    const response = await this.api.post<Response<User>>('/user/appUserLogin', {
+    const response = await this.api.post<Response<User>>(Url.AUTH, {
       username: this.username,
       password: this.password,
     });
@@ -62,7 +69,7 @@ class AcInfinityClientInstance {
   }
 
   public async getControllers(): Promise<Controller[]> {
-    const response = await this.api.post<Response<Controller[]>>('/user/devInfoListAll', {
+    const response = await this.api.post<Response<Controller[]>>(Url.CONTROLLERS, {
       userId: this.token,
     });
 
@@ -70,7 +77,7 @@ class AcInfinityClientInstance {
   }
 
   public async getDeviceSettings({ deviceId, port }: GetDeviceParams): Promise<DeviceSettings> {
-    const response = await this.api.post<Response<DeviceSettings>>(`/dev/getDevSetting`, {
+    const response = await this.api.post<Response<DeviceSettings>>(Url.DEVICE_SETTINGS, {
       devId: deviceId,
       port,
     });
@@ -79,7 +86,7 @@ class AcInfinityClientInstance {
   }
 
   public async getDeviceModeSettings({ deviceId, port }: GetDeviceParams): Promise<DeviceModeSettings> {
-    const response = await this.api.post<Response<DeviceModeSettings>>(`/dev/getdevModeSettingList`, {
+    const response = await this.api.post<Response<DeviceModeSettings>>(Url.DEVICE_MODE_SETTINGS, {
       devId: deviceId,
       port,
     });

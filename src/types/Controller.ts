@@ -15,7 +15,12 @@ export const ControllerPortSchema = z.object({
 });
 export type ControllerPort = z.infer<typeof ControllerPortSchema>;
 
-export const ControllerDeviceInfoSchema = z.object({});
+export const ControllerDeviceInfoSchema = z.object({
+  temperature: z.number(),
+  humidity: z.number(),
+  ports: z.array(ControllerPortSchema),
+  vpdnums: z.number(),
+});
 export type ControllerDeviceInfo = z.infer<typeof ControllerDeviceInfoSchema>;
 
 export const ControllerSchema = z.object({

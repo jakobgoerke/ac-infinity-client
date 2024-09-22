@@ -20,6 +20,8 @@ export enum DeviceMode {
   'VPD' = 8,
 }
 
-export const DeviceSchema = z.object({});
+export const DeviceSettingsSchema = z.object({});
+export type DeviceSettings = z.infer<typeof DeviceSettingsSchema>;
 
-export type Device = z.infer<typeof DeviceSchema>;
+export const DeviceModeSettingsSchema = z.object({});
+export type DeviceModeSettings = z.infer<typeof DeviceModeSettingsSchema>;

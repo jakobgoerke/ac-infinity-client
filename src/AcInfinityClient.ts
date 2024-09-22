@@ -1,6 +1,15 @@
 import axios, { HttpStatusCode, type AxiosInstance } from 'axios';
 
-import { Controller, ControllerSchema, User, UserSchema, Device, DeviceSchema } from './types';
+import {
+  Controller,
+  ControllerSchema,
+  User,
+  UserSchema,
+  DeviceModeSettingsSchema,
+  DeviceModeSettings,
+  DeviceSettings,
+  DeviceSettingsSchema,
+} from './types';
 
 interface Response<T> {
   code: typeof HttpStatusCode;
@@ -12,7 +21,7 @@ interface AuthParams {
   password: string;
 }
 
-interface GetDeviceSettingsParams {
+interface GetDeviceParams {
   deviceId: string;
   port: number;
 }
@@ -60,13 +69,22 @@ class AcInfinityClientInstance {
     return response.data.data.map((device) => ControllerSchema.parse(device));
   }
 
-  public async getDeviceSettings({ deviceId, port }: GetDeviceSettingsParams): Promise<Device> {
-    return (
-      await this.api.post<Response<Device>>(`/dev/getdevModeSettingList`, {
-        devId: deviceId,
-        port,
-      })
-    ).data.data;
+  public async getDeviceSettings({ deviceId, port }: GetDeviceParams): Promise<DeviceSettings> {
+    const response = await this.api.post<Response<DeviceSettings>>(`/dev/getDevSetting`, {
+      devId: deviceId,
+      port,
+    });
+
+    return DeviceSettingsSchema.parse(response.data.data);
+  }
+
+  public async getDeviceModeSettings({ deviceId, port }: GetDeviceParams): Promise<DeviceModeSettings> {
+    const response = await this.api.post<Response<DeviceModeSettings>>(`/dev/getdevModeSettingList`, {
+      devId: deviceId,
+      port,
+    });
+
+    return DeviceModeSettingsSchema.parse(response.data.data);
   }
 }
 

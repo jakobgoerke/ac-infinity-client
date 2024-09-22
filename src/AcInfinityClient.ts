@@ -1,4 +1,4 @@
-import axios, { type HttpStatusCode, type AxiosInstance } from 'axios';
+import axios, { type AxiosInstance } from 'axios';
 
 import {
   Controller,
@@ -24,7 +24,7 @@ export interface Response<T> {
 }
 
 export interface AuthParams {
-  username: string;
+  email: string;
   password: string;
 }
 
@@ -35,30 +35,31 @@ export interface GetDeviceParams {
 
 class AcInfinityClientInstance {
   constructor(args: AuthParams) {
-    const { username, password } = args;
+    const { email, password } = args;
 
-    this.username = username;
+    this.email = email;
     this.password = password;
 
     this.token = '';
 
     this.api = axios.create({
+      timeout: 5000,
       baseURL: 'http://www.acinfinityserver.com/api',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
       },
     });
   }
 
   private api: AxiosInstance;
   private token: string;
-  private username: string;
+  private email: string;
   private password: string;
 
   public async authenticate(): Promise<User> {
     const response = await this.api.post<Response<User>>(Url.AUTH, {
-      username: this.username,
-      password: this.password,
+      appEmail: this.email,
+      appPasswordl: this.password,
     });
 
     const user = UserSchema.parse(response.data.data);

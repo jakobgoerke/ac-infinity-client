@@ -5,7 +5,7 @@ import mockAxios from './__mocks__/axios';
 
 describe('AcInfintyClient', () => {
   const authparams: AuthParams = {
-    username: 'test',
+    email: 'test',
     password: 'test',
   };
 
@@ -22,7 +22,10 @@ describe('AcInfintyClient', () => {
     await AcInfinityClient.build(authparams);
 
     // then
-    expect(mockAxios.post).toHaveBeenCalledWith(Url.AUTH, authparams);
+    expect(mockAxios.post).toHaveBeenCalledWith(Url.AUTH, {
+      appEmail: authparams.email,
+      appPasswordl: authparams.password,
+    });
     expect(mockAxios.defaults.headers.common['token']).toBe(response.appId);
   });
 

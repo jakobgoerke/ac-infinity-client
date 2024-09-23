@@ -44,7 +44,7 @@ describe('AcInfintyClient', () => {
     const client = new AcInfinityClient(authparams);
 
     // then
-    expect(client.instance.authenticate()).rejects.toThrow(AuthenticationError);
+    expect(client.authenticate()).rejects.toThrow(AuthenticationError);
   });
 
   it('should throw ZodError when invalid data is returned', async () => {
@@ -65,7 +65,7 @@ describe('AcInfintyClient', () => {
     const client = new AcInfinityClient(authparams);
 
     // when
-    const controllers = await client.instance.getControllers();
+    const controllers = await client.getControllers();
 
     // then
     expect(mockAxios.post).toHaveBeenCalledWith(Url.CONTROLLERS, { userId: '' });
@@ -80,7 +80,7 @@ describe('AcInfintyClient', () => {
     const client = new AcInfinityClient(authparams);
 
     // when
-    await client.instance.getDeviceSettings({ deviceId: 'test', port: 1 });
+    await client.getDeviceSettings({ deviceId: 'test', port: 1 });
 
     // then
     expect(mockAxios.post).toHaveBeenCalledWith(Url.DEVICE_SETTINGS, { devId: 'test', port: 1 });
@@ -94,7 +94,7 @@ describe('AcInfintyClient', () => {
     const client = new AcInfinityClient(authparams);
 
     // when
-    await client.instance.getDeviceModeSettings({ deviceId: 'test', port: 1 });
+    await client.getDeviceModeSettings({ deviceId: 'test', port: 1 });
 
     // then
     expect(mockAxios.post).toHaveBeenCalledWith(Url.DEVICE_MODE_SETTINGS, { devId: 'test', port: 1 });

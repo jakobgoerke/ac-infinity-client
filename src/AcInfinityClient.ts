@@ -34,7 +34,7 @@ interface GetDeviceParams {
   port: number;
 }
 
-class AcInfinityClientInstance {
+class AcInfinityClient {
   constructor(args: AuthParams) {
     const { email, password } = args;
 
@@ -99,17 +99,9 @@ class AcInfinityClientInstance {
 
     return DeviceModeSettingsSchema.parse(response.data.data);
   }
-}
-
-class AcInfinityClient {
-  constructor(args: AuthParams) {
-    this.instance = new AcInfinityClientInstance(args);
-  }
-
-  public instance: AcInfinityClientInstance;
 
   static async build(args: AuthParams) {
-    const instance = new AcInfinityClientInstance(args);
+    const instance = new AcInfinityClient(args);
     await instance.authenticate();
     return instance;
   }

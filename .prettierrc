@@ -6,5 +6,7 @@
   "trailingComma": "es5",
   "semi": true,
   "rcVerbose": true,
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "plugins": ["@ianvs/prettier-plugin-sort-imports"],
+  "importOrder": ["<BUILTIN_MODULES>", "<THIRD_PARTY_MODULES>", "", "^~(.*)$", "", "^[.]"]
 }

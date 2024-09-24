@@ -1,9 +1,9 @@
-import { AcInfinityClient, AuthParams, Url } from '../src';
-
-import { responseMock } from './mocks/responseMock';
-import mockAxios from './__mocks__/axios';
-import { AuthenticationError } from '../src/errors';
 import { ZodError } from 'zod';
+
+import { AcInfinityClient, AuthParams, Url } from '../src';
+import { AuthenticationError } from '../src/errors';
+import mockAxios from './__mocks__/axios';
+import { responseMock } from './mocks/responseMock';
 
 describe('AcInfintyClient', () => {
   const authparams: AuthParams = {

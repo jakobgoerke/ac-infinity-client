@@ -1,6 +1,6 @@
 {
   "name": "@jakobgoerke/ac-infinity-client",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "main": "./build/src",
   "types": "./build/src/index.d.ts",
   "repository": "git@github.com:jakobgoerke/ac-infinity-client.git",

@@ -8,8 +8,8 @@ enum ControllerDeviceType {
 }
 
 export const ControllerPortSchema = z.object({
-  loadType: z.nativeEnum(DeviceType),
-  curMode: z.nativeEnum(DeviceMode),
+  loadType: z.enum(DeviceType),
+  curMode: z.enum(DeviceMode),
   port: z.number().positive(),
   speak: z.number(),
   portName: z.string(),
@@ -28,7 +28,7 @@ export const ControllerSchema = z.object({
   devId: z.string(),
   devCode: z.string(),
   devName: z.string(),
-  devType: z.nativeEnum(ControllerDeviceType),
+  devType: z.enum(ControllerDeviceType),
   devPortCount: z.number().positive(),
   devVersion: z.number(),
   online: z.coerce.boolean(),

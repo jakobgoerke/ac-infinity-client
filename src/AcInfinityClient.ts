@@ -1,16 +1,8 @@
 import axios, { type AxiosInstance } from 'axios';
 
 import { AuthenticationError } from './errors';
-import {
-  Controller,
-  ControllerSchema,
-  DeviceModeSettings,
-  DeviceModeSettingsSchema,
-  DeviceSettings,
-  DeviceSettingsSchema,
-  User,
-  UserSchema,
-} from './types';
+import type { Controller, DeviceModeSettings, DeviceSettings, User } from './types';
+import { ControllerSchema, DeviceModeSettingsSchema, DeviceSettingsSchema, UserSchema } from './types';
 
 export enum Url {
   AUTH = '/user/appUserLogin',

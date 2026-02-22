@@ -6,14 +6,20 @@ import { ControllerSchema, DeviceModeSettingsSchema, DeviceSettingsSchema, UserS
 
 export enum Url {
   AUTH = '/user/appUserLogin',
-  CONTROLLERS = '/user/devInfoListAll',
-  DEVICE_SETTINGS = '/dev/getDevSetting',
-  DEVICE_MODE_SETTINGS = '/dev/getdevModeSettingList',
+  GET_CONTROLLERS = '/user/devInfoListAll',
+  GET_DEVICE_SETTINGS = '/dev/getDevSetting',
+  GET_DEVICE_MODE_SETTINGS = '/dev/getdevModeSettingList',
+  SET_DEVICE_MODE_SETTINGS = '/dev/addDevMode',
 }
 
 export interface Response<T> {
   code: number;
   data: T;
+}
+
+interface SetResponse {
+  code: number;
+  msg: string;
 }
 
 export interface AuthParams {
@@ -24,6 +30,10 @@ export interface AuthParams {
 interface GetDeviceParams {
   deviceId: string;
   port: number;
+}
+
+interface SetDeviceModeSettingsParams extends GetDeviceParams {
+  settings: Partial<DeviceModeSettings>;
 }
 
 class AcInfinityClient {
@@ -66,8 +76,14 @@ class AcInfinityClient {
     return user;
   }
 
+  private ensureSuccess(response: SetResponse) {
+    if (response.code !== 200) {
+      throw new Error(`API request failed [code="${response.code}", msg="${response.msg}"]`);
+    }
+  }
+
   public async getControllers(): Promise<Controller[]> {
-    const response = await this.api.post<Response<Controller[]>>(Url.CONTROLLERS, {
+    const response = await this.api.post<Response<Controller[]>>(Url.GET_CONTROLLERS, {
       userId: this.token,
     });
 
@@ -75,7 +91,7 @@ class AcInfinityClient {
   }
 
   public async getDeviceSettings({ deviceId, port }: GetDeviceParams): Promise<DeviceSettings> {
-    const response = await this.api.post<Response<DeviceSettings>>(Url.DEVICE_SETTINGS, {
+    const response = await this.api.post<Response<DeviceSettings>>(Url.GET_DEVICE_SETTINGS, {
       devId: deviceId,
       port,
     });
@@ -84,12 +100,27 @@ class AcInfinityClient {
   }
 
   public async getDeviceModeSettings({ deviceId, port }: GetDeviceParams): Promise<DeviceModeSettings> {
-    const response = await this.api.post<Response<DeviceModeSettings>>(Url.DEVICE_MODE_SETTINGS, {
+    const response = await this.api.post<Response<DeviceModeSettings>>(Url.GET_DEVICE_MODE_SETTINGS, {
       devId: deviceId,
       port,
     });
 
     return DeviceModeSettingsSchema.parse(response.data.data);
+  }
+
+  public async setDeviceModeSettings({ deviceId, port, settings }: SetDeviceModeSettingsParams): Promise<void> {
+    const rawCurrentSettings = await this.api.post<Response<DeviceModeSettings>>(Url.GET_DEVICE_MODE_SETTINGS, {
+      devId: deviceId,
+      port,
+    });
+    const currentSettings = DeviceModeSettingsSchema.parse(rawCurrentSettings.data.data);
+
+    const response = await this.api.post<SetResponse>(Url.SET_DEVICE_MODE_SETTINGS, {
+      ...currentSettings,
+      ...settings,
+    });
+
+    this.ensureSuccess(response.data);
   }
 
   static async build(args: AuthParams) {

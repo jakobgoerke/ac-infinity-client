@@ -7,7 +7,7 @@ import getDeviceModeSettings from './getDeviceModeSettings.json';
 
 export const responseMock = {
   [Url.AUTH]: getAuth,
-  [Url.CONTROLLERS]: getControllers,
-  [Url.DEVICE_SETTINGS]: getDeviceSettings,
-  [Url.DEVICE_MODE_SETTINGS]: getDeviceModeSettings,
+  [Url.GET_CONTROLLERS]: getControllers,
+  [Url.GET_DEVICE_SETTINGS]: getDeviceSettings,
+  [Url.GET_DEVICE_MODE_SETTINGS]: getDeviceModeSettings,
 };

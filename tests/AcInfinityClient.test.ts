@@ -59,7 +59,7 @@ describe('AcInfintyClient', () => {
 
   it('should parse getControllers response', async () => {
     // given
-    const response = responseMock[Url.CONTROLLERS];
+    const response = responseMock[Url.GET_CONTROLLERS];
     mockApiResponse(response);
 
     const client = new AcInfinityClient(authparams);
@@ -68,13 +68,13 @@ describe('AcInfintyClient', () => {
     const controllers = await client.getControllers();
 
     // then
-    expect(mockAxios.post).toHaveBeenCalledWith(Url.CONTROLLERS, { userId: '' });
+    expect(mockAxios.post).toHaveBeenCalledWith(Url.GET_CONTROLLERS, { userId: '' });
     expect(controllers).toHaveLength(response.length);
   });
 
   it('should parse getDeviceSettings response', async () => {
     // given
-    const response = responseMock[Url.DEVICE_SETTINGS];
+    const response = responseMock[Url.GET_DEVICE_SETTINGS];
     mockApiResponse(response);
 
     const client = new AcInfinityClient(authparams);
@@ -83,12 +83,12 @@ describe('AcInfintyClient', () => {
     await client.getDeviceSettings({ deviceId: 'test', port: 1 });
 
     // then
-    expect(mockAxios.post).toHaveBeenCalledWith(Url.DEVICE_SETTINGS, { devId: 'test', port: 1 });
+    expect(mockAxios.post).toHaveBeenCalledWith(Url.GET_DEVICE_SETTINGS, { devId: 'test', port: 1 });
   });
 
   it('should parse getDeviceModeSettings response', async () => {
     // given
-    const response = responseMock[Url.DEVICE_MODE_SETTINGS];
+    const response = responseMock[Url.GET_DEVICE_MODE_SETTINGS];
     mockApiResponse(response);
 
     const client = new AcInfinityClient(authparams);
@@ -97,7 +97,7 @@ describe('AcInfintyClient', () => {
     await client.getDeviceModeSettings({ deviceId: 'test', port: 1 });
 
     // then
-    expect(mockAxios.post).toHaveBeenCalledWith(Url.DEVICE_MODE_SETTINGS, { devId: 'test', port: 1 });
+    expect(mockAxios.post).toHaveBeenCalledWith(Url.GET_DEVICE_MODE_SETTINGS, { devId: 'test', port: 1 });
   });
 
   const mockApiResponse = (data: Object, code?: number) => {

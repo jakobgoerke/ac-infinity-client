@@ -10,6 +10,7 @@
         "includes": [
             "src/**/*",
             "e2e/**/*",
+            "tests/**/*",
             "./*.{ts,js,json,md}"
         ]
     },

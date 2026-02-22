@@ -20,13 +20,34 @@ export enum DeviceMode {
   VPD = 8,
 }
 
-export const DeviceSettingsSchema = z.object({
-  setId: z.string().nullable(),
+const DeviceBaseInputSchema = z.object({
   devId: z.string(),
   devMacAddr: z.string().nullable(),
+  externalPort: z.number(),
+  offSpead: z.number().min(0).max(10),
+  onSpead: z.number().min(0).max(10),
+  onSelfSpead: z.number(),
+  ecUnit: z.number(),
+  tdsUnit: z.number(),
+  settingMode: z.number(),
+  vpdSettingMode: z.number(),
+  atType: z.enum(DeviceMode),
+});
+
+type DeviceBaseInput = z.input<typeof DeviceBaseInputSchema>;
+
+const transformDeviceBase = ({ devId, externalPort, offSpead, onSpead, atType }: DeviceBaseInput) => ({
+  id: devId,
+  port: externalPort,
+  levelWhileOff: offSpead,
+  levelWhileOn: onSpead,
+  mode: atType,
+});
+
+export const DeviceSettingsSchema = DeviceBaseInputSchema.extend({
+  setId: z.string().nullable(),
   port: z.number(),
   devName: z.string().nullable(),
-  externalPort: z.number(),
   devLight: z.number(),
   hasBacklightSwitch: z.number(),
   backlightSwitch: z.number(),
@@ -44,9 +65,6 @@ export const DeviceSettingsSchema = z.object({
   vpdCth: z.number(),
   vpdCt: z.number(),
   vpdTransition: z.number(),
-  offSpead: z.number(),
-  onSpead: z.number(),
-  onSelfSpead: z.number(),
   portResistance: z.number().nullable(),
   devBth: z.number(),
   devBt: z.number(),
@@ -57,9 +75,6 @@ export const DeviceSettingsSchema = z.object({
   loadType: z.number(),
   tempCompare: z.number(),
   humiCompare: z.number(),
-  settingMode: z.number(),
-  vpdSettingMode: z.number(),
-  atType: z.number().nullable(),
   onTimeSwitch: z.number(),
   onTime: z.number(),
   sensorSettingStr: z.string().nullable(),
@@ -75,8 +90,6 @@ export const DeviceSettingsSchema = z.object({
   onMinTime: z.number(),
   onMaxTime: z.number(),
   ecOrTds: z.number(),
-  ecUnit: z.number(),
-  tdsUnit: z.number(),
   interchangeSensor: z.number(),
   subDeviceId: z.string().nullable(),
   subDeviceVersion: z.string().nullable(),
@@ -108,10 +121,11 @@ export const DeviceSettingsSchema = z.object({
   uuid: z.string().nullable(),
   matterCode: z.string().nullable(),
   matterSta: z.unknown().nullable(),
-});
-export type DeviceSettings = z.infer<typeof DeviceSettingsSchema>;
+}).transform((v) => ({
+  ...transformDeviceBase(v),
+}));
 
-export const DeviceModeSettingsSchema = z.object({
+export const DeviceModeSettingsSchema = DeviceBaseInputSchema.extend({
   acitveTimerOff: z.number(),
   acitveTimerOn: z.number(),
   activeCycleOff: z.number(),
@@ -124,7 +138,6 @@ export const DeviceModeSettingsSchema = z.object({
   activeLt: z.number(),
   activeLtVpd: z.number(),
   activeLtVpdNums: z.number(),
-  atType: z.number(),
   co2FanHighSwitch: z.number(),
   co2FanHighValue: z.number(),
   co2LowSwitch: z.number(),
@@ -132,24 +145,17 @@ export const DeviceModeSettingsSchema = z.object({
   devHh: z.number(),
   devHt: z.number(),
   devHtf: z.number(),
-  devId: z.string(),
   devLh: z.number(),
   devLt: z.number(),
   devLtf: z.number(),
-  devMacAddr: z.string().nullable(),
   ecTdsLowSwitchEc: z.number(),
   ecTdsLowSwitchTds: z.number(),
   ecTdsLowValueEcUs: z.number(),
   ecTdsLowValueTdsPpm: z.number(),
-  ecUnit: z.number(),
-  externalPort: z.number(),
   isOpenAutomation: z.number(),
   modeType: z.number(),
   moistureLowSwitch: z.number(),
   moistureLowValue: z.number(),
-  offSpead: z.number(),
-  onSelfSpead: z.number(),
-  onSpead: z.number(),
   onlyUpdateSpeed: z.number(),
   phHighSwitch: z.number(),
   phHighValue: z.number(),
@@ -157,7 +163,6 @@ export const DeviceModeSettingsSchema = z.object({
   phLowValue: z.number(),
   schedEndtTime: z.number(),
   schedStartTime: z.number(),
-  settingMode: z.number(),
   surplus: z.number().nullable(),
   targetHumi: z.number(),
   targetHumiSwitch: z.number(),
@@ -166,8 +171,6 @@ export const DeviceModeSettingsSchema = z.object({
   targetTempF: z.number(),
   targetVpd: z.number(),
   targetVpdSwitch: z.number(),
-  tdsUnit: z.number(),
-  vpdSettingMode: z.number(),
   waterLevelLowSwitch: z.number(),
   waterTempHighSwitch: z.number(),
   waterTempHighValue: z.number(),
@@ -175,5 +178,16 @@ export const DeviceModeSettingsSchema = z.object({
   waterTempLowSwitch: z.number(),
   waterTempLowValue: z.number(),
   waterTempLowValueF: z.number(),
-});
+}).transform((v) => ({
+  ...transformDeviceBase(v),
+}));
+
+export type DeviceSettings = z.infer<typeof DeviceSettingsSchema>;
 export type DeviceModeSettings = z.infer<typeof DeviceModeSettingsSchema>;
+export type DeviceModeSettingsInput = z.input<typeof DeviceModeSettingsSchema>;
+
+export function encodeDeviceModeSettings(settings: Partial<DeviceModeSettings>): Partial<DeviceModeSettingsInput> {
+  return {
+    onSpead: settings.levelWhileOn,
+  };
+}

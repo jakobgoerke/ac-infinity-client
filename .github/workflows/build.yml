@@ -15,6 +15,6 @@ jobs:
           node-version: '24.x'
           
       - run: corepack enable
-      - run: yarn install --frozen-lockfile
+      - run: yarn install --immutable
       - run: yarn test
       - run: yarn build

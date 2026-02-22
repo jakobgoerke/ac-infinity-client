@@ -1,8 +1,8 @@
 import axios, { type AxiosInstance } from 'axios';
 
 import { AuthenticationError } from './errors';
-import type { Controller, DeviceModeSettings, DeviceSettings, User } from './types';
-import { ControllerSchema, DeviceModeSettingsSchema, DeviceSettingsSchema, UserSchema } from './types';
+import type { Controller, DeviceModeSettings, DeviceModeSettingsInput, DeviceSettings, User } from './types';
+import { ControllerSchema, DeviceModeSettingsSchema, DeviceSettingsSchema, encodeDeviceModeSettings, UserSchema } from './types';
 
 export enum Url {
   AUTH = '/user/appUserLogin',
@@ -28,12 +28,12 @@ export interface AuthParams {
 }
 
 interface GetDeviceParams {
-  deviceId: string;
+  controllerId: string;
   port: number;
 }
 
 interface SetDeviceModeSettingsParams extends GetDeviceParams {
-  settings: Partial<DeviceModeSettings>;
+  settings: Pick<Partial<DeviceModeSettings>, 'levelWhileOn'>;
 }
 
 class AcInfinityClient {
@@ -60,7 +60,7 @@ class AcInfinityClient {
   private password: string;
 
   public async authenticate(): Promise<User> {
-    const response = await this.api.post<Response<User>>(Url.AUTH, {
+    const response = await this.api.post<Response<unknown>>(Url.AUTH, {
       appEmail: this.email,
       appPasswordl: this.password,
     });
@@ -70,8 +70,8 @@ class AcInfinityClient {
     }
 
     const user = UserSchema.parse(response.data.data);
-    this.token = user.appId;
-    this.api.defaults.headers.common['token'] = user.appId;
+    this.token = user.id;
+    this.api.defaults.headers.common.token = user.id;
 
     return user;
   }
@@ -83,43 +83,41 @@ class AcInfinityClient {
   }
 
   public async getControllers(): Promise<Controller[]> {
-    const response = await this.api.post<Response<Controller[]>>(Url.GET_CONTROLLERS, {
+    const response = await this.api.post<Response<unknown[]>>(Url.GET_CONTROLLERS, {
       userId: this.token,
     });
 
     return response.data.data.map((device) => ControllerSchema.parse(device));
   }
 
-  public async getDeviceSettings({ deviceId, port }: GetDeviceParams): Promise<DeviceSettings> {
-    const response = await this.api.post<Response<DeviceSettings>>(Url.GET_DEVICE_SETTINGS, {
-      devId: deviceId,
+  public async getDeviceSettings({ controllerId, port }: GetDeviceParams): Promise<DeviceSettings> {
+    const response = await this.api.post<Response<unknown>>(Url.GET_DEVICE_SETTINGS, {
+      devId: controllerId,
       port,
     });
 
     return DeviceSettingsSchema.parse(response.data.data);
   }
 
-  public async getDeviceModeSettings({ deviceId, port }: GetDeviceParams): Promise<DeviceModeSettings> {
-    const response = await this.api.post<Response<DeviceModeSettings>>(Url.GET_DEVICE_MODE_SETTINGS, {
-      devId: deviceId,
+  public async getDeviceModeSettings({ controllerId, port }: GetDeviceParams): Promise<DeviceModeSettings> {
+    const response = await this.api.post<Response<unknown>>(Url.GET_DEVICE_MODE_SETTINGS, {
+      devId: controllerId,
       port,
     });
 
     return DeviceModeSettingsSchema.parse(response.data.data);
   }
 
-  public async setDeviceModeSettings({ deviceId, port, settings }: SetDeviceModeSettingsParams): Promise<void> {
-    const rawCurrentSettings = await this.api.post<Response<DeviceModeSettings>>(Url.GET_DEVICE_MODE_SETTINGS, {
-      devId: deviceId,
+  public async setDeviceModeSettings({ controllerId, port, settings }: SetDeviceModeSettingsParams): Promise<void> {
+    const rawCurrentSettings = await this.api.post<Response<DeviceModeSettingsInput>>(Url.GET_DEVICE_MODE_SETTINGS, {
+      devId: controllerId,
       port,
     });
-    const currentSettings = DeviceModeSettingsSchema.parse(rawCurrentSettings.data.data);
 
-    const response = await this.api.post<SetResponse>(Url.SET_DEVICE_MODE_SETTINGS, {
-      ...currentSettings,
-      ...settings,
-    });
+    const vendorChanges = encodeDeviceModeSettings(settings);
+    const payload = { ...rawCurrentSettings.data.data, ...vendorChanges };
 
+    const response = await this.api.post<SetResponse>(Url.SET_DEVICE_MODE_SETTINGS, payload);
     this.ensureSuccess(response.data);
   }
 
@@ -131,4 +129,4 @@ class AcInfinityClient {
 }
 
 export { AcInfinityClient };
-export type { Controller, User, DeviceModeSettings, DeviceSettings };
+export type { Controller, DeviceModeSettings, DeviceSettings, User };

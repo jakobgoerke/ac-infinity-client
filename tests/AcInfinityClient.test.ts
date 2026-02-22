@@ -1,3 +1,4 @@
+import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { ZodError } from 'zod';
 
 import { AcInfinityClient, AuthParams, Url } from '../src';
@@ -28,7 +29,7 @@ describe('AcInfintyClient', () => {
       appEmail: authparams.email,
       appPasswordl: authparams.password,
     });
-    expect(mockAxios.defaults.headers.common['token']).toBe(response.appId);
+    expect(mockAxios.defaults.headers.common.token).toBe(response.appId);
   });
 
   it('should throw when authentication code is not 200', async () => {
@@ -37,7 +38,7 @@ describe('AcInfintyClient', () => {
       {
         something: 'else',
       },
-      401
+      401,
     );
 
     // when
@@ -80,7 +81,7 @@ describe('AcInfintyClient', () => {
     const client = new AcInfinityClient(authparams);
 
     // when
-    await client.getDeviceSettings({ deviceId: 'test', port: 1 });
+    await client.getDeviceSettings({ controllerId: 'test', port: 1 });
 
     // then
     expect(mockAxios.post).toHaveBeenCalledWith(Url.GET_DEVICE_SETTINGS, { devId: 'test', port: 1 });
@@ -94,21 +95,59 @@ describe('AcInfintyClient', () => {
     const client = new AcInfinityClient(authparams);
 
     // when
-    await client.getDeviceModeSettings({ deviceId: 'test', port: 1 });
+    await client.getDeviceModeSettings({ controllerId: 'test', port: 1 });
 
     // then
     expect(mockAxios.post).toHaveBeenCalledWith(Url.GET_DEVICE_MODE_SETTINGS, { devId: 'test', port: 1 });
   });
 
-  const mockApiResponse = (data: Object, code?: number) => {
-    const response = {
-      data: {
-        code: code || 200,
-        data,
-      },
-    };
+  it('should merge current settings with changes when setting device mode settings', async () => {
+    // given
+    const currentSettings = responseMock[Url.GET_DEVICE_MODE_SETTINGS];
+    mockApiResponse(currentSettings);
+    mockSetResponse();
 
-    // @ts-ignore
-    mockAxios.post.mockImplementationOnce(() => Promise.resolve(response));
+    const client = new AcInfinityClient(authparams);
+
+    // when
+    await client.setDeviceModeSettings({
+      controllerId: 'test',
+      port: 1,
+      settings: { levelWhileOn: 10 },
+    });
+
+    // then
+    expect(mockAxios.post).toHaveBeenNthCalledWith(1, Url.GET_DEVICE_MODE_SETTINGS, { devId: 'test', port: 1 });
+    expect(mockAxios.post).toHaveBeenNthCalledWith(2, Url.SET_DEVICE_MODE_SETTINGS, {
+      ...currentSettings,
+      onSpead: 10,
+    });
+  });
+
+  it('should throw when set device mode settings response is not 200', async () => {
+    // given
+    mockApiResponse(responseMock[Url.GET_DEVICE_MODE_SETTINGS]);
+    mockSetResponse(500);
+
+    const client = new AcInfinityClient(authparams);
+
+    // when / then
+    await expect(client.setDeviceModeSettings({ controllerId: 'test', port: 1, settings: {} })).rejects.toThrow(Error);
+  });
+
+  const axiosResponse = <T>(data: T): AxiosResponse<T> => ({
+    data,
+    status: 200,
+    statusText: 'OK',
+    headers: {},
+    config: {} as InternalAxiosRequestConfig,
+  });
+
+  const mockSetResponse = (code = 200) => {
+    jest.mocked(mockAxios.post).mockImplementationOnce(() => Promise.resolve(axiosResponse({ code, msg: 'ok' })));
+  };
+
+  const mockApiResponse = (data: object, code = 200) => {
+    jest.mocked(mockAxios.post).mockImplementationOnce(() => Promise.resolve(axiosResponse({ code, data })));
   };
 });

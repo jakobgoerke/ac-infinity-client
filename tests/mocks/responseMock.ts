@@ -1,9 +1,8 @@
-import { Url, Response } from '../../src/AcInfinityClient';
-
-import getControllers from './getControllers.json';
+import { Url } from '../../src/AcInfinityClient';
 import getAuth from './getAuth.json';
-import getDeviceSettings from './getDeviceSettings.json';
+import getControllers from './getControllers.json';
 import getDeviceModeSettings from './getDeviceModeSettings.json';
+import getDeviceSettings from './getDeviceSettings.json';
 
 export const responseMock = {
   [Url.AUTH]: getAuth,

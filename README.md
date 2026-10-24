@@ -65,6 +65,11 @@ const user = await client.authenticate(); // { id, username, email }
 
 If the credentials are rejected, an `AuthenticationError` is thrown.
 
+> [!WARNING]
+> The user `id` returned by `authenticate()` is also the API token: it is sent with every request, and anyone who has it can control your
+> devices. Treat it like your password and keep it out of logs, issues and screenshots. The vendor API is served over plain HTTP, so the
+> token travels unencrypted.
+
 ### Controllers
 
 ```ts

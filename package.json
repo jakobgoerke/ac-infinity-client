@@ -11,11 +11,11 @@
     "build/src/**"
   ],
   "dependencies": {
-    "axios": "1.20.0",
+    "axios": "1.21.0",
     "zod": "4.6.7"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.6.2",
+    "@biomejs/biome": "2.6.4",
     "@jest/globals": "30.5.2",
     "@tsconfig/node24": "24.0.5",
     "@types/jest": "30.0.0",

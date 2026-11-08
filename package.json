@@ -1,10 +1,10 @@
 {
-  "name": "@jakobgoerke/ac-infinity-client",
+  "name": "@krngl/ac-infinity-client",
   "version": "0.3.1",
   "main": "./build/src",
   "types": "./build/src/index.d.ts",
-  "repository": "git@github.com:jakobgoerke/ac-infinity-client.git",
-  "author": "revdev <mail@revdev.me>",
+  "repository": "git@github.com:krngl/ac-infinity-client.git",
+  "author": "krngl <mail@krngl.dev>",
   "license": "GPL-3.0-or-later",
   "files": [
     "package.json",

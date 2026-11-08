@@ -1,8 +1,8 @@
 # ac-infinity-client
 
-[![npm](https://img.shields.io/npm/v/@jakobgoerke/ac-infinity-client)](https://www.npmjs.com/package/@jakobgoerke/ac-infinity-client)
-[![build & test](https://github.com/jakobgoerke/ac-infinity-client/actions/workflows/build.yml/badge.svg)](https://github.com/jakobgoerke/ac-infinity-client/actions/workflows/build.yml)
-[![license](https://img.shields.io/npm/l/@jakobgoerke/ac-infinity-client)](LICENSE)
+[![npm](https://img.shields.io/npm/v/@krngl/ac-infinity-client)](https://www.npmjs.com/package/@krngl/ac-infinity-client)
+[![build & test](https://github.com/krngl/ac-infinity-client/actions/workflows/build.yml/badge.svg)](https://github.com/krngl/ac-infinity-client/actions/workflows/build.yml)
+[![license](https://img.shields.io/npm/l/@krngl/ac-infinity-client)](LICENSE)
 
 A typed Node.js client for the [AC Infinity](https://acinfinity.com) cloud API, the same backend the AC Infinity app uses. Use it to read your
 UIS controllers, their ports and sensors, and to change device and mode settings from your own code.
@@ -18,9 +18,9 @@ UIS controllers, their ports and sensors, and to change device and mode settings
 ## Installation
 
 ```sh
-npm install @jakobgoerke/ac-infinity-client
+npm install @krngl/ac-infinity-client
 # or
-yarn add @jakobgoerke/ac-infinity-client
+yarn add @krngl/ac-infinity-client
 ```
 
 Requires Node.js 24 or newer.
@@ -28,7 +28,7 @@ Requires Node.js 24 or newer.
 ## Quick start
 
 ```ts
-import { AcInfinityClient, DeviceMode } from '@jakobgoerke/ac-infinity-client';
+import { AcInfinityClient, DeviceMode } from '@krngl/ac-infinity-client';
 
 // build() creates the client and logs in
 const client = await AcInfinityClient.build({
@@ -212,7 +212,7 @@ As with temperature triggers, give the temperature calibration in either `temper
 | `ZodError`            | A response didn't match the expected shape, or the changes you passed are out of range. |
 
 ```ts
-import { ApiError } from '@jakobgoerke/ac-infinity-client';
+import { ApiError } from '@krngl/ac-infinity-client';
 
 try {
   await client.getController({ controllerId: 'unknown' });
